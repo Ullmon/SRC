@@ -1,101 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>System Boot</title>
-	<style>
-		* { box-sizing: border-box; }
-		body {
-			min-height: 100vh; margin: 0; padding: 24px; display: grid; place-items: center;
-			background: radial-gradient(ellipse at center, #102019, #050a07 75%);
-			color: #a5ffb5; font: 14px/1.65 Consolas, "Courier New", monospace;
-		}
-		.terminal {
-			width: min(760px, 100%); height: min(520px, 80vh); min-height: 300px;
-			display: flex; flex-direction: column; overflow: hidden; position: relative;
-			border: 1px solid #31533b; border-radius: 10px; background: #050b07ed;
-			box-shadow: 0 0 70px #49ff7d18, inset 0 0 35px #49ff7d08;
-		}
-		.terminal::after {
-			content: ""; position: absolute; inset: 0; pointer-events: none;
-			background: repeating-linear-gradient(transparent 0 3px, #0002 4px);
-		}
-		header { padding: 12px 18px; border-bottom: 1px solid #203a29; color: #80b88e; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
-		.lights { float: right; color: #72b781; letter-spacing: .4em; }
-		.screen { flex: 1; overflow-y: auto; padding: 20px 24px 12px; scroll-behavior: smooth; }
-		#log { margin: 0; white-space: pre-wrap; }
-		.line { display: block; animation: appear .2s ease-out both; }
-		.muted { color: #64806b; }
-		.ok { color: #d5ffdc; }
-		.status { display: flex; align-items: center; gap: 12px; padding: 12px 20px 16px; border-top: 1px solid #203a29; color: #78a984; font-size: 11px; letter-spacing: .08em; }
-		.track { height: 3px; flex: 1; background: #1a3021; }
-		.fill { width: 0; height: 100%; background: #a5ffb5; box-shadow: 0 0 9px #a5ffb5; transition: width .35s ease; }
-		#percent { width: 34px; text-align: right; }
-		.cursor { display: inline-block; width: .65em; height: 1em; vertical-align: -.15em; background: #a5ffb5; animation: blink 1s steps(2, start) infinite; }
-		@keyframes blink { to { visibility: hidden; } }
-		@keyframes appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-		@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
-	</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SRC // Autonomous Core</title>
+<style>
+:root{
+  --bg:#050805;
+  --fg:#d2ffd0;
+  --ok:#8dffa8;
+  --muted:#5f8f66;
+  --bad:#a8ffb8;
+  --glow:rgba(141,255,168,.35);
+
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#050805}}
+:root[data-theme="dark"]{--bg:#050805}
+
+html{
+    height:100%;
+    scroll-padding-top:env(safe-area-inset-top,0px)
+}
+
+body{
+    margin:0;
+    min-height:100%;
+    background:var(--bg);
+    color:var(--fg);
+  font-family:"Courier New",Courier,monospace;
+  font-size:15px;
+  line-height:1.55;
+  position:relative
+}
+
+body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0,rgba(0,0,0,.28) 1px,transparent 1px,transparent 3px)
+}
+
+main{
+    max-width:760px;
+    margin:0 auto;padding:28px 20px 60px
+}
+
+header{
+    border-bottom:1px solid var(--muted);
+    padding-bottom:10px;margin-bottom:18px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  color:var(--muted);
+  font-size:12px;
+  letter-spacing:.12em
+}
+
+#log{
+    white-space:pre-wrap;
+    word-break:break-word;
+    overflow-x:auto
+}
+
+.line{
+    text-shadow:0 0 6px var(--glow)
+}
+
+.muted{
+    color:var(--muted);
+    letter-spacing:.2em;
+    font-weight:bold
+}
+
+.ok{
+    color:var(--ok)
+}
+
+.bad{
+    color:var(--bad);
+    opacity:.55;
+    text-shadow:2px 0 rgba(255,120,120,.35),-2px 0 rgba(120,180,255,.35)
+}
+.cursor{
+    display:inline-block;
+    width:.6em;
+    height:1em;
+    background:var(--ok);
+    vertical-align:-2px;
+    animation:b 1s steps(1) infinite
+}
+@keyframes b{50%{opacity:0}}
+footer{
+    margin-top:28px;
+    font-size:12px;
+    color:var(--muted)
+}
+footer a{
+    color:var(--ok);
+    text-decoration:none;
+    border-bottom:1px dashed var(--ok)
+}
+button{
+    background:none;
+    border:1px solid var(--muted);
+    color:var(--muted);
+    font:inherit;
+    font-size:12px;
+    padding:4px 10px;
+    cursor:pointer
+}
+button:hover{
+    color:var(--ok);border-color:var(--ok)
+    }
+</style>
 </head>
 <body>
-	<main class="terminal" aria-label="Machine boot sequence">
-		<header>NOVA // diagnostics console <span class="lights">● ● ●</span></header>
-		<section class="screen" aria-live="polite"><pre id="log"></pre></section>
-		<footer class="status"><span id="phase">INITIALIZING</span><div class="track"><div class="fill" id="fill"></div></div><span id="percent">0%</span></footer>
-	</main>
-	<script>
-		const messages = [
-			["NOVA SYSTEMS // AUTONOMOUS CORE", "muted"],
-			["Power-on self test initiated...", ""],
-			["CPU     : QUANTUM-8 @ 4.2 GHz", "ok"],
-			["MEMORY  : 64,000 MB ........ OK", "ok"],
-			["Checking memory integrity", ""],
-			["  0x00000000 - 0x03FFFFFF  PASS", "ok"],
-			["  0x04000000 - 0x07FFFFFF  PASS", "ok"],
-			["Storage : NVMe array detected", ""],
-			["  /dev/nvme0 .............. READY", "ok"],
-			["Loading kernel modules", ""],
-			["  [####################] 100%", "ok"],
-			["Network : secure link established", "ok"],
-			["Calibrating sensor matrix...", ""],
-			["  IMU ............... ONLINE", "ok"],
-			["  OPTICAL ARRAY ..... ONLINE", "ok"],
-			["  THERMAL CONTROL ... NOMINAL", "ok"],
-			["Verifying system signature", ""],
-			["  SHA-256: 7F3A-91C2-BOOT-OK", "ok"],
-			["All systems nominal.", "ok"],
-			["Welcome back, operator.", "ok"]
-		];
-		const log = document.getElementById("log");
-		const screen = document.querySelector(".screen");
-		const fill = document.getElementById("fill");
-		const percent = document.getElementById("percent");
-		const phase = document.getElementById("phase");
-		let index = 0;
-
-		function addLine() {
-			if (index === messages.length) {
-				phase.textContent = "SYSTEM READY";
-				log.append(" ");
-				const cursor = document.createElement("span");
-				cursor.className = "cursor";
-				log.append(cursor);
-				return;
-			}
-			const [text, style] = messages[index++];
-			const line = document.createElement("span");
-			line.className = `line ${style}`;
-			line.textContent = `> ${text}`;
-			log.append(line);
-			const progress = Math.round(index / messages.length * 100);
-			fill.style.width = `${progress}%`;
-			percent.textContent = `${progress}%`;
-			phase.textContent = progress > 70 ? "STARTING SERVICES" : progress > 35 ? "LOADING KERNEL" : "INITIALIZING";
-			screen.scrollTop = screen.scrollHeight;
-			setTimeout(addLine, 220 + Math.random() * 260);
-		}
-		setTimeout(addLine, 500);
-	</script>
+<main>
+  <header><span>STOLAS ROBOTICS CORPORATION</span><span>TERMINAL 01 // SECURE</span></header>
+  <div id="log" aria-live="polite"></div><span class="cursor"></span>
+  <footer id="foot" hidden>
+    <a href="https://ullmon.github.io/SRC/SRC%20report%20center.html">&gt; ENTER REPORT CENTER</a>
+    &nbsp; <button id="replay">REPLAY</button> <button id="stop">CANCEL REDIRECT</button>
+    <div id="cd" style="margin-top:10px;color:var(--ok)"></div>
+    <div style="margin-top:14px">&copy; 1903 Stolas Robotics Corporation</div>
+  </footer>
+</main>
+<script>
+const G = "█▓▒░▌▐╪╫¤¿§Ø∆µ£%ù$*#@!?<>/\\|~^";
+const rnd = n => Math.floor(Math.random() * n);
+const hex = (n, w=8) => n.toString(16).toUpperCase().padStart(w, "0");
+const pad = (n, w=2) => String(n).padStart(w, "0");
+const corrupt = (t, p=.22) => [...t].map(c => c === " " || Math.random() > p ? c : G[rnd(G.length)]).join("");
+const L = [];
+const add = (t, c="") => L.push([t, c]);
+const bad = t => add(corrupt(t), "bad");
+const partial = (t, p=.12) => add(corrupt(t, p), "ok");
+ 
+add("SRC  // AUTONOMOUS CORE", "muted");
+add("Power-on self test initiated...");
+add("CPU     : QUANTUM-8 @ 4.2 GHz", "ok");
+add("CORES   : 64 ........ ONLINE", "ok");
+add("CACHE   : L1 L2 L3 .. COHERENT", "ok");
+add("MEMORY  : 64,000 MB ........ OK", "ok");
+add("Checking memory integrity");
+for (let i = 0; i < 64; i++){
+  const line = `  0x${hex(i*0x04000000)} - 0x${hex((i+1)*0x04000000-1)}  PASS`;
+  if ([9,17,33,47,58].includes(i)) bad(line); else add(line, "ok");
+}
+add("Remapping bad blocks ..... 2 REMAPPED", "ok");
+add("Storage : NVMe array detected");
+for (let i = 0; i < 6; i++) add(`  /dev/nvme${i} .............. READY`, "ok");
+add("  RAID-10 volume assembled .. OK", "ok");
+add("  Filesystem check .......... CLEAN", "ok");
+bad("  Journal replay ............ RECOVERED");
+add("Loading kernel modules");
+const mods = ["core","sched","mmu","irq","dma","crypto","netstack","servo","gyro","optic","thermal","comms","audit","failsafe","vfs","tty","hid","power","clock","entropy","watchdog","ipc","drv-motor","drv-lidar"];
+mods.forEach((m, i, a) => { const l = `  [${"#".repeat(Math.round((i+1)/a.length*20)).padEnd(20, ".")}] ${String(Math.round((i+1)/a.length*100)).padStart(3)}%  ${m}.ko`; i === 13 ? partial(l) : add(l, "ok"); });
+add("Seeding entropy pool ..... OK", "ok");
+add("Network : secure link established", "ok");
+add("  Handshake .... TLS-Q 1.9 ... ACCEPTED", "ok");
+add("  Uplink ....... STOLAS-MAINFRAME ... LOCKED", "ok");
+add("  Latency ...... 3 ms", "ok");
+add("  Packet loss .. 0.00%", "ok");
+bad("  Remote node 04 ... UNREACHABLE");
+add("Calibrating sensor matrix...");
+["IMU ............... ONLINE","OPTICAL ARRAY ..... ONLINE","THERMAL CONTROL ... NOMINAL","LIDAR SWEEP ....... ONLINE","AUDIO INPUT ....... ONLINE","PROXIMITY GRID .... ONLINE","MAGNETOMETER ...... ONLINE","BAROMETER ......... ONLINE"].forEach(t => add("  " + t, "ok"));
+add("Servo actuators");
+for (let i = 1; i <= 16; i++) add(`  ACT-${pad(i)} torque test ........ ${i === 7 ? "NOMINAL" : "PASS"}`, "ok");
+partial("  ACT-17 torque test ........ PASS");
+add("Power systems");
+["Primary cell ...... 100%","Reserve cell ...... 100%","Bus voltage ....... STABLE","Charge cycle ...... 0001"].forEach(t => add("  " + t, "ok"));
+add("Behavior core");
+["Directive table ... LOADED","Safety lattice .... ENGAGED","Autonomy level .... SUPERVISED","Ethics kernel ..... SEALED"].forEach(t => add("  " + t, "ok"));
+bad("  Directive 0x4F2A .. CHECKSUM MISMATCH");
+add("Recovering fragmented logs...");
+for (let i = 0; i < 6; i++) bad(`  LOG ${hex(rnd(0xFFFFFF),6)} :: ENTRY ${pad(rnd(999),3)} :: ${["OPERATOR LOGIN","DOOR 3 OPENED","UNIT RELOCATED","SIGNAL LOST","CORE RESET","SUBJECT RETURNED"][i]}`);
+ 
+add("Enumerating system bus");
+const devs = ["host bridge","pcie root 00","pcie root 01","usb-xhci","sata ctl","nvme ctl","gpu-0","gpu-1","tensor unit","dsp-a","dsp-b","fpga-0","fpga-1","clock gen","rtc","tpm","bmc","i2c-0","i2c-1","spi-0","uart-0","uart-1","can-0","can-1","eth-0","eth-1","wifi-sec","rf-mod"];
+devs.forEach((d, i) => { const l = `  ${hex(i*8,4)}:${pad(i%16)}.0  ${d.padEnd(14)} ......... DETECTED`; i % 11 === 6 ? partial(l) : add(l, "ok"); });
+add("Starting services");
+const svc = ["logd","timesync","netmgr","secd","motiond","visiond","audiod","plannerd","safetyd","telemetryd","updated","diagd","powerd","thermald","fsd","cryptod","busd","schedd","watchdogd","configd","statsd","archived","speechd","navd","mapd","graspd","balanced","cond"];
+svc.forEach((n, i) => { const l = `  [ OK ] Started ${n}.service`; i % 9 === 4 ? partial(l, .1) : add(l, "ok"); });
+add("Verifying firmware images");
+for (let i = 0; i < 24; i++){ const l = `  FW-${pad(i+1)}  ${hex(rnd(0xFFFFFFFF))}  VERIFIED`; i % 8 === 5 ? bad(l) : add(l, "ok"); }
+add("Scanning filesystem inodes");
+for (let i = 0; i < 24; i++){ const l = `  inode block ${pad(i*512,6)} - ${pad((i+1)*512-1,6)} ...... OK`; i % 10 === 3 ? partial(l, .15) : add(l, "ok"); }
+add("Pinging remote nodes");
+for (let i = 1; i <= 24; i++){ const l = `  NODE-${pad(i)}  ${rnd(9)+1} ms  ${i === 4 || i === 15 ? "NO RESPONSE" : "ALIVE"}`; (i === 4 || i === 15) ? bad(l) : add(l, "ok"); }
+add("Running sensor calibration passes");
+for (let p = 1; p <= 10; p++){
+  add(`  PASS ${pad(p)}/10`, "muted");
+  ["imu","optic","lidar","thermal"].forEach(n => add(`    ${n.padEnd(8)} drift ${(Math.random()*0.02).toFixed(4)}  CORRECTED`, "ok"));
+}
+add("Torque verification sweep");
+for (let i = 17; i <= 40; i++){ const l = `  ACT-${pad(i)} torque test ........ PASS`; i % 9 === 0 ? partial(l, .14) : add(l, "ok"); }
+add("Neural weights loading");
+for (let i = 0; i < 20; i++){ const l = `  layer ${pad(i)}  ${hex(rnd(0xFFFFFF),6)}  ${(80+Math.random()*19).toFixed(2)}%  LOADED`; i === 7 || i === 14 ? bad(l) : add(l, "ok"); }
+add("Reading maintenance history");
+for (let i = 0; i < 24; i++) bad(`  ${["19","20"][rnd(2)]}${pad(rnd(99))}-${pad(rnd(12)+1)}-${pad(rnd(28)+1)}  UNIT ${hex(rnd(0xFFF),3)}  ${["SERVICED","RECALIBRATED","FAULT CLEARED","PART REPLACED","INSPECTED","RETURNED TO FLOOR"][rnd(6)]}`);
+add("Recovering deleted records...");
+for (let i = 0; i < 24; i++) bad(`  FRAG ${hex(rnd(0xFFFFFF),6)} :: ${["...subject was not authorized to...","...do not open the lower...","...it responded without being asked...","...reset the unit and say nothing...","...the signal came from inside...","...report filed under another number..."][rnd(6)]}`);
+ 
+add("Mapping thermal zones");
+for (let i = 1; i <= 30; i++){ const l = `  ZONE-${pad(i)}  ${(28+Math.random()*14).toFixed(1)} C  ${i % 13 === 0 ? "WARM" : "NOMINAL"}`; i % 12 === 7 ? partial(l, .15) : add(l, "ok"); }
+add("Opening encrypted channels");
+for (let i = 0; i < 30; i++){ const l = `  CH-${pad(i)}  key ${hex(rnd(0xFFFFFF),6)}-${hex(rnd(0xFFFFFF),6)}  SEALED`; i % 10 === 6 ? bad(l) : add(l, "ok"); }
+add("Final diagnostics");
+for (let i = 1; i <= 30; i++){ const l = `  DIAG-${pad(i,3)} ${["bus","cache","motor","vision","audio","power","comms","safety","memory","storage"][i%10].padEnd(8)} ........ ${i % 14 === 0 ? "WARN (IGNORED)" : "PASS"}`; i % 14 === 0 ? bad(l) : add(l, "ok"); }
+add("Archiving reports...");
+add("  Indexing report records ...", "muted");
+for (let i = 1; i <= 14; i++){ if (i === 5) add("  REPORT Nº644 ...... INDEXED", "ok"); else if (i === 10) add("  REPORT Nº852 ...... INDEXED", "ok"); else bad("  REPORT Nº[ERROR] .. INDEXED"); }
+add("  Some entries unreadable. [ERROR]", "muted");
+add("Verifying system signature");
+add("  SHA-256: 7F3A-91C2-BOOT-OK", "ok");
+add("  Chain of trust ..... INTACT", "ok");
+add("All systems nominal.", "ok");
+add("Welcome back, operator.", "ok");
+add("Opening report center...", "muted");
+ 
+const log = document.getElementById("log"), foot = document.getElementById("foot");
+let run = 0, timer = null;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const TARGET = "https://ullmon.github.io/SRC/SRC%20report%20center.html";
+async function boot(){
+  clearTimeout(timer); document.getElementById("cd").textContent = "";
+  const id = ++run; log.innerHTML = ""; foot.hidden = true;
+  for (const [text, cls] of L){
+    if (id !== run) return;
+    const d = document.createElement("div");
+    d.className = "line " + cls; log.appendChild(d);
+    for (let i = 0; i < text.length; i += 6){ d.textContent += text.slice(i, i+6); if (Math.random() < .25) await sleep(1); }
+    await sleep(text.endsWith("...") ? 70 : 2);
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+  if (id !== run) return;
+  foot.hidden = false; countdown(id);
+  window.scrollTo(0, document.body.scrollHeight);
+}
+function countdown(id){
+  let n = 3; const el = document.getElementById("cd");
+  const tick = () => {
+    if (id !== run) return;
+    if (n === 0){ try { (window.top || window).location.href = TARGET; } catch(e){ window.location.href = TARGET; } return; }
+    el.textContent = "REDIRECTING IN " + n + "...";
+    n--; timer = setTimeout(tick, 1000);
+  };
+  tick();
+}
+// random corruption flicker on already-printed lines
+setInterval(() => {
+  const k = log.children; if (k.length < 2) return;
+  const d = k[rnd(k.length - 1)], orig = d.textContent;
+  if (!orig.trim() || d.dataset.f) return;
+  d.dataset.f = 1;
+  d.textContent = corrupt(orig, .08);
+  setTimeout(() => { d.textContent = orig; delete d.dataset.f; }, 90 + rnd(120));
+}, 140);
+document.getElementById("replay").onclick = boot;
+document.getElementById("stop").onclick = () => { run++; clearTimeout(timer); document.getElementById("cd").textContent = "REDIRECT CANCELLED."; };
+boot();
+</script>
 </body>
 </html>
