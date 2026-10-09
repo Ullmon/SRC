@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>System Boot</title>
+	<style>
+		* { box-sizing: border-box; }
+		body {
+			min-height: 100vh; margin: 0; padding: 24px; display: grid; place-items: center;
+			background: radial-gradient(ellipse at center, #102019, #050a07 75%);
+			color: #a5ffb5; font: 14px/1.65 Consolas, "Courier New", monospace;
+		}
+		.terminal {
+			width: min(760px, 100%); height: min(520px, 80vh); min-height: 300px;
+			display: flex; flex-direction: column; overflow: hidden; position: relative;
+			border: 1px solid #31533b; border-radius: 10px; background: #050b07ed;
+			box-shadow: 0 0 70px #49ff7d18, inset 0 0 35px #49ff7d08;
+		}
+		.terminal::after {
+			content: ""; position: absolute; inset: 0; pointer-events: none;
+			background: repeating-linear-gradient(transparent 0 3px, #0002 4px);
+		}
+		header { padding: 12px 18px; border-bottom: 1px solid #203a29; color: #80b88e; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
+		.lights { float: right; color: #72b781; letter-spacing: .4em; }
+		.screen { flex: 1; overflow-y: auto; padding: 20px 24px 12px; scroll-behavior: smooth; }
+		#log { margin: 0; white-space: pre-wrap; }
+		.line { display: block; animation: appear .2s ease-out both; }
+		.muted { color: #64806b; }
+		.ok { color: #d5ffdc; }
+		.status { display: flex; align-items: center; gap: 12px; padding: 12px 20px 16px; border-top: 1px solid #203a29; color: #78a984; font-size: 11px; letter-spacing: .08em; }
+		.track { height: 3px; flex: 1; background: #1a3021; }
+		.fill { width: 0; height: 100%; background: #a5ffb5; box-shadow: 0 0 9px #a5ffb5; transition: width .35s ease; }
+		#percent { width: 34px; text-align: right; }
+		.cursor { display: inline-block; width: .65em; height: 1em; vertical-align: -.15em; background: #a5ffb5; animation: blink 1s steps(2, start) infinite; }
+		@keyframes blink { to { visibility: hidden; } }
+		@keyframes appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+		@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+	</style>
+</head>
+<body>
+	<main class="terminal" aria-label="Machine boot sequence">
+		<header>NOVA // diagnostics console <span class="lights">● ● ●</span></header>
+		<section class="screen" aria-live="polite"><pre id="log"></pre></section>
+		<footer class="status"><span id="phase">INITIALIZING</span><div class="track"><div class="fill" id="fill"></div></div><span id="percent">0%</span></footer>
+	</main>
+	<script>
+		const messages = [
+			["NOVA SYSTEMS // AUTONOMOUS CORE", "muted"],
+			["Power-on self test initiated...", ""],
+			["CPU     : QUANTUM-8 @ 4.2 GHz", "ok"],
+			["MEMORY  : 64,000 MB ........ OK", "ok"],
+			["Checking memory integrity", ""],
+			["  0x00000000 - 0x03FFFFFF  PASS", "ok"],
+			["  0x04000000 - 0x07FFFFFF  PASS", "ok"],
+			["Storage : NVMe array detected", ""],
+			["  /dev/nvme0 .............. READY", "ok"],
+			["Loading kernel modules", ""],
+			["  [####################] 100%", "ok"],
+			["Network : secure link established", "ok"],
+			["Calibrating sensor matrix...", ""],
+			["  IMU ............... ONLINE", "ok"],
+			["  OPTICAL ARRAY ..... ONLINE", "ok"],
+			["  THERMAL CONTROL ... NOMINAL", "ok"],
+			["Verifying system signature", ""],
+			["  SHA-256: 7F3A-91C2-BOOT-OK", "ok"],
+			["All systems nominal.", "ok"],
+			["Welcome back, operator.", "ok"]
+		];
+		const log = document.getElementById("log");
+		const screen = document.querySelector(".screen");
+		const fill = document.getElementById("fill");
+		const percent = document.getElementById("percent");
+		const phase = document.getElementById("phase");
+		let index = 0;
+
+		function addLine() {
+			if (index === messages.length) {
+				phase.textContent = "SYSTEM READY";
+				log.append(" ");
+				const cursor = document.createElement("span");
+				cursor.className = "cursor";
+				log.append(cursor);
+				return;
+			}
+			const [text, style] = messages[index++];
+			const line = document.createElement("span");
+			line.className = `line ${style}`;
+			line.textContent = `> ${text}`;
+			log.append(line);
+			const progress = Math.round(index / messages.length * 100);
+			fill.style.width = `${progress}%`;
+			percent.textContent = `${progress}%`;
+			phase.textContent = progress > 70 ? "STARTING SERVICES" : progress > 35 ? "LOADING KERNEL" : "INITIALIZING";
+			screen.scrollTop = screen.scrollHeight;
+			setTimeout(addLine, 220 + Math.random() * 260);
+		}
+		setTimeout(addLine, 500);
+	</script>
+</body>
+</html>
