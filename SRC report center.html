@@ -5,80 +5,126 @@
   <meta charset="UTF-8">
   <title>SRC report center</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      background-color: black;
+  html{
+    background:#050805
+  }
+  
+  body{
+    margin:0 auto;
+    max-width:720px;
+    padding:24px 20px 60px;
+    color:#d2ffd0;
+    background:#050805;
+    font-family:"Courier New",Courier,monospace;
+    font-size:16px;
+    line-height:1.6;
+    text-shadow:0 0 6px rgba(141,255,168,.3)
+  }
+  
+  img{
+    display:block;
+    max-width:220px;
+    margin:0 auto 20px
+  }
+  
+  h1{
+    font-size:22px;
+    letter-spacing:.12em;
+    font-weight:bold;
+    color:#8dffa8;
+    margin:0 0 18px
+  }
+  
+  ul{
+    margin:0;
+    padding-left:22px
+  }
+  
+  li{
+    padding:1px 0
+  }
+  
+  a{
+    color:#8dffa8;
+    text-decoration:none
+  }
+  
+  a:hover{
+    text-decoration:underline
+  }
+  
+  p{
+    margin:0 0 10px
+  }
+  
+  .log div{
+    white-space:pre-wrap;
+    word-break:break-word;
+    min-height:1.6em
+  }
+  
+  .m{
+    color:#5f8f66;
+    font-weight:bold;
+    letter-spacing:.15em
+  }
+  
+  .k{
+    color:#8dffa8
+  }
+  
+  .x{
+    opacity:.55;
+    text-shadow:2px 0 rgba(255,120,120,.35),-2px 0 rgba(120,180,255,.35)
+  }
+  
+  .foot{
+    margin-top:36px;font-size:13px;color:#5f8f66
+  }
+  
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0,rgba(0,0,0,.22) 1px,transparent 1px,transparent 3px)
     }
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    main {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      max-width: 600px;
-      margin: auto;
-    }
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      color: #888;
-    }
-    h1 {
-      color: #333;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      background: #f9f9f9;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-    }
-    a {
-      color: #000000;
-      text-decoration: none;
-    }
-    img {
-      display: block;
-      margin: auto;
-      width: 10%;
-      height: 10%;
-    }
-      
-  </style>
+
+</style>
 </head>
+
 <body>
-  <img src="SRC LOG0.jpg" alt="SRC LOGO">
-  <header>
-    <h1>SRC Report center</h1>
-  </header>
-  <main>
-    <ul>
-      <li>[REPORT N°[ERROR]]</li>
-      <li>[REPORT N°[ERROR]]</li>
-      <li>[REPORT N°[ERROR]]</li>
-      <li>[REPORT N°[ERROR]]</li>
-      <li><a href="Report n°644.html">[REPORT N°644]</a></li>
-      <li>[REPORT N°[ERROR]]</li>
-      <li>[REPORT N°[ERROR]]</li>
-      <li>[REPORT N°[ERROR]]</li>
-      <li>[REPORT N°[ERROR]]</li>
-      <li><a href="Report n°852.html">[REPORT N°852]</a></li>
-      <li>[REPORT N°[ERROR]]</li>
-      <li>[REPORT N°[ERROR]]</li>
-      <li>[REPORT N°[ERROR]]</li>
-      <li><a href="report n°[ERROR].html">[REPORT N°µ£%,ù$*]</a></li>
-    </ul>
-  </main>
-  <footer>
-    &copy; 1903 Stolas Robotics Corporation
-  </footer>
-</body>
-</html>
+<img src="SRC LOG0.jpg" alt="SRC LOGO" onerror="this.style.display='none'">
+<h1>SRC Report center</h1>
+<ul>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li><a href="Report n°644.html">[REPORT N°644]</a></li>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li><a href="Report n°852.html">[REPORT N°852]</a></li>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li class="d">[REPORT N°[ERROR]]</li>
+<li><a href="report n°[ERROR].html">[REPORT N°µ£%,ù$*]</a></li>
+</ul>
+<div class="foot"> © 1903 Stolas Robotics Corporation</div>
+<script>
+const G="█▓▒░▌▐╪╫¤¿§Ø∆µ£%ù$*#@!?<>/\\|~^";
+const Z=["\u0300","\u0301","\u0302","\u0303","\u0306","\u0308","\u030A","\u0316","\u0317","\u0323","\u0329","\u0334","\u0335","\u0336"];
+const rnd=n=>Math.floor(Math.random()*n);
+const corrupt=(t,p=.2,z=0)=>[...t].map(c=>{if(c===" "||Math.random()>p)return c;let g=G[rnd(G.length)];for(let i=0;i<z;i++)g+=Z[rnd(Z.length)];return g}).join("");
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+const li=[...document.querySelectorAll("li")];
+li.forEach(e=>e.dataset.o=e.innerHTML);
+setInterval(()=>{
+  li.forEach(e=>{if(e.classList.contains("d"))e.textContent=Math.random()<.3?"[REPORT N°"+corrupt("[ERROR]",.7)+"]":e.dataset.o});
+  const a=li[rnd(li.length)],k=a.firstElementChild;
+  if(k&&!a.dataset.f){a.dataset.f=1;const o=k.textContent;k.textContent=corrupt(o,.2);setTimeout(()=>{k.textContent=o;delete a.dataset.f},110)}
+},140);
+</script>
+</body></html>
