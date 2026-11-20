@@ -117,7 +117,7 @@ function start(){
     },110);
   }else{
     setInterval(()=>{const i=rnd(lis.length),d=lis[i];if(d.dataset.f)return;d.dataset.f=1;
-      d.textContent=corrupt(TXT[i],.08);setTimeout(()=>{d.textContent=TXT[i];delete d.dataset.f},90+rnd(120))},1600);
+      d.textContent=corrupt(TXT[i],.08);setTimeout(()=>{d.textContent=TXT[i];delete d.dataset.f},90+rnd(120))},3200);
   }
 }
 </script>
