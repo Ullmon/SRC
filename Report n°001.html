@@ -1,121 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <link rel="shortcut icon" href="SRC LOG0.png" type="image/x-icon" />
-  <meta charset="UTF-8">
-  <title>[Report n°001]</title>
-  <style>
-      html{
-    background:#050805
-  }
-  
-  body{
-    margin:0 auto;
-    max-width:720px;
-    padding:24px 20px 60px;
-    color:#d2ffd0;
-    background:#050805;
-    font-family:"Courier New",Courier,monospace;
-    font-size:16px;line-height:1.6;
-    text-shadow:0 0 6px rgba(141,255,168,.3)
-  }
-  
-  h1{
-    font-size:24px;
-    letter-spacing:.06em;
-    font-weight:bold;
-    color:#8dffa8;
-    margin:0 0 6px
-  }
-  
-  h2{
-    font-size:16px;
-    font-weight:normal;
-    margin:0 0 20px
-  }
-  
-  a{
-    color:#8dffa8;
-    text-decoration:none
-  }
-  
-  a:hover{
-    text-decoration:underline
-  }
-
-  ul{
-    margin:0;
-    padding-left:22px
-  }
-
-  li{
-    padding:3px 0;
-    word-break:break-word;
-    min-height:1.6em
-  }
-
-  .foot{
-    margin-top:36px;
-    font-size:13px;
-    color:#5f8f66
-  }
-
-  body::after{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0,rgba(0,0,0,.22) 1px,transparent 1px,transparent 3px)
+  <head>
+    <link rel="shortcut icon" href="SRC LOG0.png" type="image/x-icon" />
+    <meta charset="UTF-8">
+    <title>[Report n°001]</title>
+    <style>
+        html{
+      background:#050805
     }
-  </style>
-</head>
-
-<body>
-<h1 id="h">Report n°001</h1>
-<h2><a href="SRC%20report%20center.html">BACK</a></h2>
-<ul>
-<li></li>
-<li></li>
-<li></li>
-<li></li>
-<li></li>
-</ul>
-<div class="foot"> © 1903 Stolas Robotics Corporation</div>
-
-</body>
-<script>
-const G="█▓▒░▌▐╪╫¤¿§Ø∆µ£%ù$*#@!?<>/\\|~^";
-const Z=["\u0300","\u0301","\u0302","\u0303","\u0306","\u0308","\u030A","\u0316","\u0317","\u0323","\u0329","\u0334","\u0335","\u0336"];
-const rnd=n=>Math.floor(Math.random()*n);
-const corrupt=(t,p=.2,z=0)=>[...t].map(c=>{if(c===" "||Math.random()>p)return c;let g=G[rnd(G.length)];for(let i=0;i<z;i++)g+=Z[rnd(Z.length)];return g}).join("");
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-
-const TXT=["The implementation of [REDACTED] has been successful", "He's still inactive at the moment", "We'll wait for the systems to stabilize before waking him up", "If his father wasn't paying us so much, we wouldn't have to deal with this", "Why do i feel like this is a bad idea...", "end report"];
-const H1="Report n°001";
-const HEAVY=false;
-const lis=[...document.querySelectorAll("li")];
-(async()=>{
-  for(let i=0;i<TXT.length;i++){
-    const t=TXT[i],d=lis[i];
-    const s=HEAVY?corrupt(t,.15+i*.04):t;
-    for(let k=0;k<s.length;k+=4){d.textContent+=s.slice(k,k+4);if(Math.random()<.3)await sleep(1)}
-    await sleep(HEAVY?40:60);
-  }
-  start();
-})();
-function start(){
-  if(HEAVY){
-    setInterval(()=>{
-      lis.forEach((d,i)=>{const t=TXT[i];
-        d.textContent=Math.random()<.1?t.split("").map(c=>c===" "?c:G[rnd(G.length)]).join(""):corrupt(t,.2+i*.07,i>1?1+rnd(2):0)});
-      document.getElementById("h").textContent=corrupt(H1,.45,1);
-    },110);
-  }else{
-    setInterval(()=>{const i=rnd(lis.length),d=lis[i];if(d.dataset.f)return;d.dataset.f=1;
-      d.textContent=corrupt(TXT[i],.08);setTimeout(()=>{d.textContent=TXT[i];delete d.dataset.f},90+rnd(120))},1600);
-  }
-}
-</script>
+    
+    body{
+      margin:0 auto;
+      max-width:720px;
+      padding:24px 20px 60px;
+      color:#d2ffd0;
+      background:#050805;
+      font-family:"Courier New",Courier,monospace;
+      font-size:16px;line-height:1.6;
+      text-shadow:0 0 6px rgba(141,255,168,.3)
+    }
+    
+    h1{
+      font-size:24px;
+      letter-spacing:.06em;
+      font-weight:bold;
+      color:#8dffa8;
+      margin:0 0 6px
+    }
+    
+    h2{
+      font-size:16px;
+      font-weight:normal;
+      margin:0 0 20px
+    }
+    
+    a{
+      color:#8dffa8;
+      text-decoration:none
+    }
+    
+    a:hover{
+      text-decoration:underline
+    }
+  
+    ul{
+      margin:0;
+      padding-left:22px
+    }
+  
+    li{
+      padding:3px 0;
+      word-break:break-word;
+      min-height:1.6em
+    }
+  
+    .foot{
+      margin-top:36px;
+      font-size:13px;
+      color:#5f8f66
+    }
+  
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0,rgba(0,0,0,.22) 1px,transparent 1px,transparent 3px)
+      }
+    </style>
+  </head>
+  
+  <body>
+    <h1 id="h">Report n°001</h1>
+    <h2><a href="SRC%20report%20center.html">BACK</a></h2>
+    <ul>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+    <div class="foot"> © 1903 Stolas Robotics Corporation</div>
+    
+    <script>
+      const G="█▓▒░▌▐╪╫¤¿§Ø∆µ£%ù$*#@!?<>/\\|~^";
+      const Z=["\u0300","\u0301","\u0302","\u0303","\u0306","\u0308","\u030A","\u0316","\u0317","\u0323","\u0329","\u0334","\u0335","\u0336"];
+      const rnd=n=>Math.floor(Math.random()*n);
+      const corrupt=(t,p=.2,z=0)=>[...t].map(c=>{if(c===" "||Math.random()>p)return c;let g=G[rnd(G.length)];for(let i=0;i<z;i++)g+=Z[rnd(Z.length)];return g}).join("");
+      const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+      
+      const TXT=["The implementation of [REDACTED] has been successful", "He's still inactive at the moment", "We'll wait for the systems to stabilize before waking him up", "If his father wasn't paying us so much, we wouldn't have to deal with this", "Why do i feel like this is a bad idea...", "end report"];
+      const H1="Report n°001";
+      const HEAVY=false;
+      const lis=[...document.querySelectorAll("li")];
+      (async()=>{
+        for(let i=0;i<TXT.length;i++){
+          const t=TXT[i],d=lis[i];
+          const s=HEAVY?corrupt(t,.15+i*.04):t;
+          for(let k=0;k<s.length;k+=4){d.textContent+=s.slice(k,k+4);if(Math.random()<.3)await sleep(1)}
+          await sleep(HEAVY?40:60);
+        }
+        start();
+      })();
+      function start(){
+        if(HEAVY){
+          setInterval(()=>{
+            lis.forEach((d,i)=>{const t=TXT[i];
+              d.textContent=Math.random()<.1?t.split("").map(c=>c===" "?c:G[rnd(G.length)]).join(""):corrupt(t,.2+i*.07,i>1?1+rnd(2):0)});
+            document.getElementById("h").textContent=corrupt(H1,.45,1);
+          },110);
+        }else{
+          setInterval(()=>{const i=rnd(lis.length),d=lis[i];if(d.dataset.f)return;d.dataset.f=1;
+            d.textContent=corrupt(TXT[i],.08);setTimeout(()=>{d.textContent=TXT[i];delete d.dataset.f},90+rnd(120))},1600);
+        }
+      }
+    </script>
+  
+  </body>
 </html>
 
 
