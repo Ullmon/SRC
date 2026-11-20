@@ -88,7 +88,7 @@ const rnd=n=>Math.floor(Math.random()*n);
 const corrupt=(t,p=.2,z=0)=>[...t].map(c=>{if(c===" "||Math.random()>p)return c;let g=G[rnd(G.length)];for(let i=0;i<z;i++)g+=Z[rnd(Z.length)];return g}).join("");
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
-const TXT=["The implementation of [REDACTED] has been successful", "He's still inactive at the moment", "We'll wait for the systems to stabilize before waking him up", "If his father wasn't paying us so much, we wouldn't have to deal with this", "Why do i feel like this is a bad idea..." "end report"];
+const TXT=["The implementation of [REDACTED] has been successful", "He's still inactive at the moment", "We'll wait for the systems to stabilize before waking him up", "If his father wasn't paying us so much, we wouldn't have to deal with this", "Why do i feel like this is a bad idea...", "end report"];
 const H1="Report n°001";
 const HEAVY=false;
 const lis=[...document.querySelectorAll("li")];
