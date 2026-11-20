@@ -103,7 +103,7 @@ const lis=[...document.querySelectorAll("li")];
   for(let i=0;i<TXT.length;i++){
     const t=TXT[i],d=lis[i];
     const s=HEAVY?corrupt(t,.15+i*.04):t;
-    for(let k=0;k<s.length;k+=6){d.textContent+=s.slice(k,k+4);if(Math.random()<.3)await sleep(1)}
+    for(let k=0;k<s.length;k+=15){d.textContent+=s.slice(k,k+4);if(Math.random()<.3)await sleep(1)}
     await sleep(HEAVY?40:60);
   }
   start();
